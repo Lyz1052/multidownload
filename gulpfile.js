@@ -14,8 +14,12 @@ gulp.task('init',['libs'],()=>{
     console.log('Init success.')
 })
 
-gulp.task('build',['background','settings'],()=>{
-    console.log('Build success.')
+gulp.task('build',['background'])
+
+gulp.task('watch',['build'],()=>{
+    gulp.watch('src/js/background/*.js',{
+        interval:2500
+    },['build']).on('error', gutil.log)
 })
 
 gulp.task('background',()=>{
@@ -25,18 +29,18 @@ gulp.task('background',()=>{
       });
 
     //Readable Stream
-    return b.bundle()
+    return b.transform("babelify", {presets: ["es2015"]}).bundle()
+    .on('error', gutil.log)
     //Transform into VInyl File Object Stream
     .pipe(source('background.js'))
+    .on('error', gutil.log)
     //Transform into VInyl File Object Buffer
     .pipe(buffer())
     .on('error', gutil.log)
-    .pipe(babel({presets: ['es2015']}))
-    .on('error', gutil.log)
-    // .pipe(gulp.src('src/js/lib/*.js'))
-    // .pipe(concat('background.js'))
-    .pipe(uglify())
-    .on('error', gutil.log)
+    // .pipe(babel({presets: ['es2015']}))
+    // .on('error', gutil.log)
+    // .pipe(uglify())
+    // .on('error', gutil.log)
     .pipe(gulp.dest('./build'))
 
     // .pipe(sourcemaps.init({loadMaps: true}))
@@ -56,8 +60,8 @@ gulp.task('settings',()=>{
     .on('error', gutil.log)
     .pipe(babel({presets: ['es2015']}))
     .on('error', gutil.log)
-    .pipe(uglify())
-    .on('error', gutil.log)
+    // .pipe(uglify())
+    // .on('error', gutil.log)
     .pipe(gulp.dest('./build'))
 })
 
