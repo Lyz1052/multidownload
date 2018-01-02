@@ -42,12 +42,15 @@ chrome.runtime.onInstalled.addListener(function(){
         endPoint: 'http://localhost:6800/jsonrpc',
         namespace: 'aria2'
     });
-    debugger
+    
     let download = new Download([url])
     download.start().then((result)=>{
         
-        download.status = new DownloadStatus(result)
-        console.log(JSON.stringify(download.status.getAll()))
+        download.status = new DownloadStatus()
+
+        download.status.getAll(result.result).then((results)=>{
+            console.log(results)
+        })
     },(err)=>{
         console.log(err)
     })

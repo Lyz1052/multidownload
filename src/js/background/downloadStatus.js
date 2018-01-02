@@ -1,28 +1,27 @@
 const co = require('co')
 
 class DownloadStatus{
-    constructor(startGid){
-        this.gid = startGid
-        this.statusChain = {}
+    constructor(){
     }
 
-    jsonRPC(gid,onSuccess,onError){
-        if(gid)
-            $.jsonRPC.request('tellStatus', {
-                params: [gid,options],
-                success: onSuccess,
-                error: onError
-            })
-    }
-
-    getAll(followId = this.gid,prev){
-        return co(function* get(followId) {
-            this.jsonRPC((result)=>{
-                var nextId = result.followedBy
-                if(nextId)
-                    get(yield nextId)
-            },(err)=>{})
-        })
+    getAll(followId,prev){
+        let get = async function(){
+            let results = [],options = {}
+            while(followId){
+                await new Promise((resolve,reject)=>{
+                    $.jsonRPC.request('tellStatus', {
+                        params: [followId],
+                        success: resolve,
+                        error: reject
+                    })
+                }).then((result)=>{
+                    results.push(result)
+                    followId = result.followedBy
+                })
+            }
+            return results
+        }
+        return get()
     }
 }
 
