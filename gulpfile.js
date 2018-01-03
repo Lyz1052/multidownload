@@ -14,7 +14,7 @@ gulp.task('init',['libs'],()=>{
     console.log('Init success.')
 })
 
-gulp.task('build',['background'])
+gulp.task('build',['background','settings'])
 
 gulp.task('watch',['build'],()=>{
     gulp.watch('src/js/background/*.js',{
@@ -54,11 +54,9 @@ gulp.task('settings',()=>{
         debug: true
       });
 
-    return b.bundle()
+    return b.transform("babelify", {presets: ["es2015"]}).bundle()
     .pipe(source('settings.js'))
     .pipe(buffer())
-    .on('error', gutil.log)
-    .pipe(babel({presets: ['es2015']}))
     .on('error', gutil.log)
     // .pipe(uglify())
     // .on('error', gutil.log)
@@ -69,7 +67,9 @@ gulp.task('libs',()=>{
     gulp.src(['src/js/lib/jquery.min.js'
             ,'src/js/lib/bootstrap.min.js'
             ,'src/js/lib/adminlte.min.js'
-            ,'src/js/lib/jquery.jsonrpc.js'])
+            ,'src/js/lib/jquery.jsonrpc.js'
+            ,'src/js/lib/template-web.js'
+        ])
     .pipe(concat('libs.js'))
     .pipe(gulp.dest('./build'))
 })

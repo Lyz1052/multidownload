@@ -130,26 +130,26 @@
                 <!--</li>-->
                 <!--没有子节点，包含图标-->
                 <li>
-                    <a onclick="">
+                    <a>
                     <i class="fa fa-spinner"></i> <span>Downloading</span>
                     <span class="pull-right-container">
-                    <small class="label pull-right bg-red">3</small>
-                    <small class="label pull-right bg-blue">17</small>
+                    <small class="label pull-right bg-red" id="downloadingErrCount"></small>
+                    <small class="label pull-right bg-blue" id="downloadingCount"></small>
                     </span>
                     </a>
                 </li>
 
                 <li>
-                    <a onclick="">
+                    <a>
                         <i class="fa fa-download"></i> <span>Downloaded</span>
                         <span class="pull-right-container">
-                    <small class="label pull-right bg-blue">17</small>
+                    <small class="label pull-right bg-blue" id="downloadedCount">17</small>
                     </span>
                     </a>
                 </li>
 
                 <li>
-                    <a onclick="">
+                    <a>
                         <i class="fa fa-recycle"></i> <span>Recycling</span>
                         <span class="pull-right-container">
                     <small class="label pull-right bg-red">3</small>
@@ -187,31 +187,28 @@
         </section>
         <!-- Main content -->
         <section class="content">
-
-            <table>
+            <table class="table" id="itemTable">
                 <thead>
-                <th>link</th>
+                <th>gid</th>
                 <th>filename</th>
                 <th>status</th>
-                <th>size</th>
-                <th>downloaded</th>
+                <th>totalLength</th>
+                <th>completedLength</th>
                 <th>connections</th>
-                <th>speed</th>
-                <th>starttime</th>
-                <th>channel</th>
+                <th>downloadSpeed</th>
+                <!-- <th>starttime</th> -->
                 </thead>
                 <tbody id="itemParent">
                 <script type="text/html" id="itemTemplate">
-                    <tr data-tr>
-                        <td>{{link}}</td>
-                        <td>{{filename}}</td>
-                        <td>{{status}}</td>
-                        <td>{{size}}</td>
-                        <td>{{downloaded}}</td>
-                        <td>{{connections}}</td>
-                        <td>{{speed}}</td>
-                        <td>{{starttime}}</td>
-                        <td>{{channel}}</td>
+                    <tr data-gid="{{gid}}">
+                        <td name="gid">{{gid}}</td>
+                        <td name="filename">{{filename}}</td>
+                        <td name="status">{{status}}</td>
+                        <td name="totalLength">{{totalLength}}</td>
+                        <td name="completedLength">{{completedLength}}</td>
+                        <td name="connections">{{connections}}</td>
+                        <td name="downloadSpeed">{{downloadSpeed}}</td>
+                        <!-- <td>{{starttime}}</td> -->
                     </tr>
                 </script>
                 </tbody>

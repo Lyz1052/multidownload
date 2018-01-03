@@ -38,21 +38,15 @@ chrome.runtime.onInstalled.addListener(function(){
         url = info.linkUrl
     }
 
-    $.jsonRPC.setup({
-        endPoint: 'http://localhost:6800/jsonrpc',
-        namespace: 'aria2'
-    });
-    
-    let download = new Download([url])
-    download.start().then((result)=>{
-        
-        download.status = new DownloadStatus()
+    let download = new Download({
+        urls:[url]
+    })
 
-        download.status.getAll(result.result).then((results)=>{
-            console.log(results)
-        })
-    },(err)=>{
-        console.log(err)
+    download.start()
+        .then(Download.startResolver)
+        .then((status)=>{
+        //获取下载状态
+        status.getAll().then(DownloadStatus.reportStatus)
     })
  }
 

@@ -1,21 +1,31 @@
-// const path = require('path')
+//一些工具类，减少重复代码
+const utils = {
+    RPCInit:function(config={
+        namespace:'aria2',
+        port:6800,
+    }){
 
-// const multi = {
-//     addUri:function(){
-//         $.jsonRPC.request('addUri', {
-//             params: [[url],options],
-//             success: function(result) {
-//                 //addUri
-//                 //{id: 1, jsonrpc: "2.0", result: "f0790a3827d9ee9c"}
-//                 console.log(result)
-//             },
-//             error: function(result) {
-//                 debugger
-//                 console.log(result)
-//               // Result is an RPC 2.0 compatible response object
-//             }
-//           });
-//     }
-// }
+        $.jsonRPC.setup({
+            endPoint: 'http://localhost:'+config.port+'/jsonrpc',
+            namespace: config.namespace
+        });
+    },
 
-// export multi
+    RPCPromise:function(method,params = []){
+        if(method.indexOf('system')==0){
+            this.RPCInit({namespace:'system'})
+        }else{
+            this.RPCInit()
+        }
+
+        return new Promise((resolve,rejected)=>{
+            $.jsonRPC.request(method, {
+                params: params,
+                success: resolve,
+                error: rejected,
+            });
+        })
+    }
+}
+
+export default utils
