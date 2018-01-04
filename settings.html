@@ -143,7 +143,7 @@
                     <a>
                         <i class="fa fa-download"></i> <span>Downloaded</span>
                         <span class="pull-right-container">
-                    <small class="label pull-right bg-blue" id="downloadedCount">17</small>
+                    <small class="label pull-right bg-blue" id="downloadedCount"></small>
                     </span>
                     </a>
                 </li>
@@ -152,7 +152,7 @@
                     <a>
                         <i class="fa fa-recycle"></i> <span>Recycling</span>
                         <span class="pull-right-container">
-                    <small class="label pull-right bg-red">3</small>
+                    <small class="label pull-right bg-red"></small>
                     </span>
                     </a>
                 </li>
@@ -180,9 +180,12 @@
                 Downloading
                 <small>view downloading items..</small>
             </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                <li class="active">Downloading</li>
+            <ol class="breadcrumb" id="testButtons">
+                <li><a>shutdown</a></li>
+                <li><a>unpauseAll</a></li>
+                <li><a>pauseAll</a></li>
+                <li><a>saveSession</a></li>
+                <li><a>purgeDownloadResult</a></li>
             </ol>
         </section>
         <!-- Main content -->
@@ -196,6 +199,7 @@
                 <th>completedLength</th>
                 <th>connections</th>
                 <th>downloadSpeed</th>
+                <th>numSeeders</th>
                 <!-- <th>starttime</th> -->
                 </thead>
                 <tbody id="itemParent">
@@ -208,6 +212,7 @@
                         <td name="completedLength">{{completedLength}}</td>
                         <td name="connections">{{connections}}</td>
                         <td name="downloadSpeed">{{downloadSpeed}}</td>
+                        <td name="numSeeders">{{numSeeders}}</td>
                         <!-- <td>{{starttime}}</td> -->
                     </tr>
                 </script>

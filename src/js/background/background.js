@@ -1,5 +1,6 @@
 import Download from './download'
 import DownloadStatus from './downloadStatus'
+import {WINDOW} from '../multi/multi'
 
 // const path = require('path')
 
@@ -27,9 +28,12 @@ chrome.runtime.onInstalled.addListener(function(){
  
  chrome.contextMenus.onClicked.addListener(onContextMenu)
 
+ //右键菜单
  function onContextMenu(info,tab){
+     //获取 url
     let element = elements.find((e)=>e.menuId==info.menuItemId)
     let url = info.srcUrl
+
     if(element.name=='page'){
         url = info.pageUrl
     }
@@ -38,15 +42,21 @@ chrome.runtime.onInstalled.addListener(function(){
         url = info.linkUrl
     }
 
+    //开始下载
     let download = new Download({
         urls:[url]
     })
 
     download.start()
-        .then(Download.startResolver)
-        .then((status)=>{
-        //获取下载状态
-        status.getAll().then(DownloadStatus.reportStatus)
-    })
+        //处理下载结果
+        .then((result)=>{
+            download.resolveStart(result)
+
+            download.status.promise.then((status)=>{
+                if(status.get('errorCode')==12){
+                    WINDOW.ALERT('重复的下载')
+                }
+            })
+        })
  }
 

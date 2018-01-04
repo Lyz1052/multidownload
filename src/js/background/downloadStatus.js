@@ -1,15 +1,33 @@
-import utils from '../multi/multi'
+import {utils} from '../multi/multi'
 
 class DownloadStatus{
-    constructor(gid){
-        this.gid = gid
+    constructor(result){
+        this.gid = result.result
+        this.promise = this.init()
     }
 
-    getAll(followId = gid,prev){
+    init(){
+        return utils.RPCPromise('tellStatus',[this.gid]).then((result)=>{
+            this.downloadResult = result.result
+            this.status = result.status
+            return this
+        })
+    }
+
+    get(p){
+        if(!this.downloadResult){
+            this.init()
+        }else{
+            return this.downloadResult[p]
+        }
+    }
+
+    //bt 下载的所有下载状态
+    getAllStatusPromise (followId = this.gid,prev){
         let get = async function(){
             let results = [],options = {}
             while(followId){
-                await utils.RPCPromise('tellStatus',[followId,options]).then((result)=>{
+                await utils.RPCPromise('tellStatus',[followId]).then((result)=>{
                     results.push(result)
                     followId = result.followedBy
                 })
@@ -19,8 +37,8 @@ class DownloadStatus{
         return get()
     }
 
-    static reportStatus(results){
-        console.log(results)
+    reportStatus(result){
+        console.log(result)
     }
 }
 

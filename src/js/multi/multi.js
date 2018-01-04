@@ -1,4 +1,5 @@
 //一些工具类，减少重复代码
+
 const utils = {
     RPCInit:function(config={
         namespace:'aria2',
@@ -25,7 +26,29 @@ const utils = {
                 error: rejected,
             });
         })
+    },
+
+    Alert(window,res){
+        window.alert(window.JSON.stringify(res))
     }
 }
 
-export default utils
+class WINDOW{
+    constructor(window,config){
+        this.window = window
+        this.config = config
+    }
+
+    alert(message){
+        window.alert(window.JSON.stringify(message))
+    }
+
+    //chrome.tabs 不指定ID，可以获取当前窗口
+    static ALERT(message){
+        chrome.tabs.executeScript({
+            code:'alert("'+message+'")'
+        })
+    }
+}
+
+export {utils,WINDOW}
