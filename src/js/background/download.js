@@ -43,8 +43,14 @@ class Download{
     //开始下载成功，会返回一个下载状态
     resolveStart(result){
         this.gid = result.result
+        utils.RPCPromise('saveSession').finally()//保存下载状态
         this.status = new DownloadStatus(result)
         return this
+    }
+
+    //处理下载状态
+    statusComplete(status,error){
+        return this.status.promise.then(status,error)
     }
 
     pause(options = {}){

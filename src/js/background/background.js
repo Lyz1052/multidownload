@@ -51,8 +51,7 @@ chrome.runtime.onInstalled.addListener(function(){
         //处理下载结果
         .then((result)=>{
             download.resolveStart(result)
-
-            download.status.promise.then((status)=>{
+                    .statusComplete((status)=>{
                 if(status.get('errorCode')==12){
                     WINDOW.ALERT('重复的下载')
                 }
