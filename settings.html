@@ -33,9 +33,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
 </head>
-<body id="app" class="skin-blue sidebar-mini fixed" style="height: auto; min-height: 100%;">
-<div class="wrapper" style="height: auto; min-height: 100%;">
-{{downloads}}
+<body class="skin-blue sidebar-mini fixed" style="height: auto; min-height: 100%;">
+<div id="app" class="wrapper" style="height: auto; min-height: 100%;">
     <header class="main-header">
         <!-- Logo -->
         <a href="../../index2.html" class="logo">
@@ -202,7 +201,7 @@
                 <th>numSeeders</th>
                 <!-- <th>starttime</th> -->
                 </thead>
-                <tbody >
+                <tbody>
                     <tr data-gid="" v-for="download in downloads">
                         <td name="gid">{{download.gid}}</td>
                         <td name="filename">{{download.filename}}</td>
@@ -253,9 +252,9 @@
     <div class="control-sidebar-bg"></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="build/libs.js"></script>
 <script src="build/settings.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue" async></script>
 
 </body>
 </html>

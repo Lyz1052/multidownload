@@ -1,6 +1,5 @@
 import DownloadStatus from './downloadStatus'
 import {utils} from '../multi/multi'
-const _ = require('lodash')
 const path = require('path')
 
 class Download{
