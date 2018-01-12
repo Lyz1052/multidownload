@@ -12,12 +12,14 @@
   },
   "omnibox": { "keyword" : "Multidownload" },
   "permissions": [
+    "<all_urls>",
+    "webRequest",
     "activeTab",
     "tabs",
     "storage",
     "contextMenus"
   ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net/npm/vue; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net/npm/vue; object-src 'self'",
   "background":{
     "scripts":["build/background.js","build/libs.js"],
     "persistence":false

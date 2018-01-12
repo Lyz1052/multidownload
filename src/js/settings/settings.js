@@ -1,4 +1,4 @@
-import {utils,WINDOW} from '../multi/multi'
+import {utils,Global,Multi} from '../multi/multi'
 import Download from '../background/download'
 import { setTimeout } from 'timers';
 // const _ = require('lodash')
@@ -9,7 +9,7 @@ let data = {
 
 $(()=>{
   
-  var win = new WINDOW(this)
+  var win = new Global(this)
 
   $('body').on('click','#itemTable',function(){
     refresh()
@@ -25,6 +25,7 @@ $(()=>{
     data:data,
   })
 
+  Multi.download()
   refresh()
 })
 

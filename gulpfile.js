@@ -5,6 +5,7 @@ const browserify = require('browserify')
 const uglify = require('gulp-uglify');
 const sourcemaps = require('gulp-sourcemaps');
 const gutil = require('gulp-util');
+const babelify = require('babelify');
 
 
 const source = require('vinyl-source-stream');
@@ -23,13 +24,11 @@ gulp.task('watch',['build'],()=>{
 })
 
 gulp.task('background',()=>{
-    let b = browserify({
+    //Readable Stream
+    return browserify({
         entries: './src/js/background/background.js',
         debug: true
-      });
-
-    //Readable Stream
-    return b.transform("babelify", {presets: ["es2015"]}).bundle()
+    }).transform(babelify, {presets: ["es2015"],sourceMaps:true}).bundle()
     .on('error', gutil.log)
     //Transform into VInyl File Object Stream
     .pipe(source('background.js'))
@@ -48,13 +47,11 @@ gulp.task('background',()=>{
     // .pipe(gulp.dest('./build'))
 })
 
-gulp.task('settings',()=>{
-    let b = browserify({
+gulp.task('settings',function(){
+    return browserify({
         entries: './src/js/settings/settings.js',
         debug: true
-      });
-
-    return b.transform("babelify", {presets: ["es2015"]}).bundle()
+      }).transform(babelify, {presets: ["es2015"]}).bundle()
     .pipe(source('settings.js'))
     .pipe(buffer())
     .on('error', gutil.log)
@@ -71,5 +68,7 @@ gulp.task('libs',()=>{
             // ,'src/js/lib/template-web.js'
         ])
     .pipe(concat('libs.js'))
+    .pipe(uglify())
+    .on('error', gutil.log)
     .pipe(gulp.dest('./build'))
 })
