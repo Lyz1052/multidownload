@@ -18,8 +18,9 @@ let tabStats = {}
 
 chrome.runtime.onInstalled.addListener(()=>{
     // ["page","selection","link","editable","image","video","audio"]
+    // chrome.contextMenus.create({"id": e.menuId,"title": "Download resource "+e.name})
     elements.forEach((e)=>{
-        chrome.contextMenus.create({"title": "Download resource "+e.name, "contexts":[e.name],"id": e.menuId})
+        chrome.contextMenus.create({"id": e.menuId,"title": "Download resource "+e.name})
     })
 
     Multi.loadMedia()
@@ -32,6 +33,7 @@ chrome.webRequest.onBeforeRequest.addListener((details)=>{
     let tabStat
 
     if(tabStats[details.tabId]){
+        chrome.contextMenus.create({"type":"normal","id":"context_"+details.tabId,"title": "Download page video"})
         tabStat = tabStats[details.tabId]
     }else{
         tabStat = tabStats[details.tabId] || {

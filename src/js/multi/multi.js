@@ -1,3 +1,4 @@
+import Download from '../background/download'
 import {_} from '../lib/lodash.min.js'
 //一些工具类，减少重复代码
 
@@ -36,10 +37,7 @@ const utils = {
 
 //通用工具类
 class Global{
-    constructor(env,config){
-        this.window = env.window||null
-        this.console = env.console||null
-        this.config = config
+    constructor(){
     }
 
     static copy(source){
@@ -154,9 +152,46 @@ class Multi{
         })
 
         //下载请求的callback
+        //成功获取到下载状态时，生成一条历史记录
         download.start().then((result)=>{
-            download.resolveStart(result).statusComplete(statusCallback)
+            download.resolveStart(result).statusComplete((status)=>{
+                Multi.history.add(download)
+                statusCallback.apply(this,[status])
+            })
         })
+    }
+}
+
+/********************* 下载历史 *********************/
+Multi.history = {
+    add(obj = {}){
+        let history = Global.localStorage.get('history',{
+            downloads:[]
+        })
+
+        if(obj.gid){//如果找到下载记录，则修改记录的信息，否则添加这条记录
+            let download = _.find(history.downloads,{
+                gid:obj.gid
+            })
+
+            if(download){
+                $.extend(download,obj)
+            }else{
+                history.downloads.push(obj)
+            }
+        }else{
+            history.downloads.push(obj)
+        }
+
+        Global.localStorage.set('history',history)
+    },
+
+    get(filter = {}){
+        let history = Global.localStorage.get('history',{
+            downloads:[]
+        })
+
+        return _.filter(history.downloads,filter)
     }
 }
 

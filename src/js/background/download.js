@@ -35,8 +35,9 @@ class Download{
     }
 
     start(options = {}){
-        if(this.urls)
+        if(this.urls){
             return utils.RPCPromise('addUri',[this.urls,options])
+        }
     }
 
     //开始下载成功，会返回一个下载状态

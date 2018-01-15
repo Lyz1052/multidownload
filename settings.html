@@ -140,7 +140,7 @@
 
                 <li>
                     <a>
-                        <i class="fa fa-download"></i> <span>Downloaded</span>
+                        <i class="fa fa-download"></i> <span>Config</span>
                         <span class="pull-right-container">
                     <small class="label pull-right bg-blue" id="downloadedCount"></small>
                     </span>
@@ -149,7 +149,7 @@
 
                 <li>
                     <a>
-                        <i class="fa fa-recycle"></i> <span>Recycling</span>
+                        <i class="fa fa-recycle"></i> <span>History</span>
                         <span class="pull-right-container">
                     <small class="label pull-right bg-red"></small>
                     </span>
@@ -176,10 +176,15 @@
         <!--导航栏-->
         <section class="content-header">
             <h1>
-                Downloading
-                <small>view downloading items..</small>
+                {{status.text}}
+                <small>{{status.info}}</small>
+                <small>
+                    <input type="text" id="searchInput">搜索
+                    <input type="checkbox" id="showDetail"> 显示详细信息
+                </small>
             </h1>
             <ol class="breadcrumb" id="testButtons">
+                <li><a>refresh</a></li>
                 <li><a>shutdown</a></li>
                 <li><a>unpauseAll</a></li>
                 <li><a>pauseAll</a></li>
@@ -191,18 +196,18 @@
         <section class="content">
             <table class="table" id="itemTable">
                 <thead>
-                <th>gid</th>
-                <th>filename</th>
-                <th>status</th>
-                <th>totalLength</th>
-                <th>completedLength</th>
-                <th>connections</th>
-                <th>downloadSpeed</th>
-                <th>numSeeders</th>
+                <th name="gid">gid</th>
+                <th name="filename">filename</th>
+                <th name="status">status</th>
+                <th name="totalLength">totalLength</th>
+                <th name="completedLength">completedLength</th>
+                <th name="connections">connections</th>
+                <th name="downloadSpeed">downloadSpeed</th>
+                <th name="numSeeders">numSeeders</th>
                 <!-- <th>starttime</th> -->
                 </thead>
                 <tbody>
-                    <tr data-gid="" v-for="download in downloads">
+                    <tr data-gid="" v-if="download.isShow" v-for="download in downloads">
                         <td name="gid">{{download.gid}}</td>
                         <td name="filename">{{download.filename}}</td>
                         <td name="status">{{download.status}}</td>
@@ -254,7 +259,7 @@
 
 <script src="build/libs.js"></script>
 <script src="build/settings.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue" async></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
 </body>
 </html>

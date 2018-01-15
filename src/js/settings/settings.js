@@ -1,9 +1,16 @@
 import {utils,Global,Multi} from '../multi/multi'
 import Download from '../background/download'
 import { setTimeout } from 'timers';
-// const _ = require('lodash')
+import {_} from '../lib/lodash.min.js'
+
+const Status = {
+  connecting:{text:'Connecting',info:'maybe your aria2 did not started'},
+  dowloading:{text:'Downloading',info:'view downloading items..'}
+}
 
 let data = {
+  status:Status.connecting,
+  filter:{},
   downloads:[]
 }
 
@@ -14,21 +21,27 @@ $(()=>{
   $('body').on('click','#itemTable',function(){
     refresh()
   })
-  
+
   $('#testButtons li').click((ev)=>{
-    utils.RPCPromise($(ev.target).closest('li').find('a').html()).then(win.alert).catch(win.alert)
+    let eventObj = $(ev.target).closest('li').find('a'),event = eventObj.html()
+
+    if(event == 'refresh'){
+      refresh()
+    }else{
+      utils.RPCPromise(event).then(alert).catch(alert)
+    }
   })
   
-  //这里仅仅使用Vue渲染模板，没有使用标准的Vue方式
+  //这里仅仅使用Vue渲染模板，没有使用标准的Vue方式处理整个页面
   let app = new Vue({
     el:'#app',
     data:data,
   })
 
-  Multi.download()
   refresh()
 })
 
+//刷新下载
 function refresh(){
   Promise.all([utils.RPCPromise('tellActive'),
   utils.RPCPromise('tellWaiting',[0,Number.MAX_SAFE_INTEGER]),
@@ -36,6 +49,8 @@ function refresh(){
   .then((results)=>{
     let [active,waiting,stopped] = results
       ,downloadingCount = 0,downloadedCount = 0
+
+      data.status = Status.dowloading
 
       data.downloads = []
 
@@ -50,6 +65,58 @@ function refresh(){
       stopped.result.forEach((download)=>{
         data.downloads.push(new Download(download).attributes())
       })
+      
+      data.downloads.forEach((download)=>{
+        if(_.isMatch(download,data.filter)){
+          download.isShow = true
+        }else{
+          download.isShow = false
+        }
+      })
   })
 }
 
+//搜索
+$(()=>{
+    $('body').on('keypress','#searchInput',function(e){
+      if(e.keyCode==13){
+        filterData({
+          filename:$(this).val().trim()
+        })
+
+        refresh()
+      }
+  })
+})
+
+function filterData(obj){
+  $.extend(data.filter,obj)
+}
+
+//显示列
+const defaultColumns = ["filename","process","createTime"]
+$(()=>{
+  $('body').on('change','#showDetail',function(){
+    let clicked = $(this).is(':checked')
+
+    if(clicked){
+      toggleColumns(1)
+    }else{
+      toggleColumns(0)
+    }
+  })
+
+  function toggleColumns(show){
+    let table = $('#itemTable')
+  
+    table.find('th,td').hide()
+  
+    if(show){
+      table.find('th,td').show()
+    }else{
+      defaultColumns.forEach((name)=>{
+        table.find('th[name="'+name+'"],td[name="'+name+'"]').show()
+      })
+    }
+  }
+})
