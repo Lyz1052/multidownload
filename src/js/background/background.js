@@ -7,33 +7,42 @@ import {Global,Multi} from '../multi/multi'
 // const path = require('path')
 
 //["page","selection","link","editable","image","video","audio"]
-const elements = ["page","link","image","video","audio"].map((e)=>{
+const pageElements = ["link","image","video","audio"].map((e)=>{
     return {
         name:e,
         menuId:"context_"+e
     }
 })
 
-let tabStats = {}
+let tabStats = {},hasPageVideoMenu = false //是否添加过页面下载的菜单
 
 chrome.runtime.onInstalled.addListener(()=>{
-    // ["page","selection","link","editable","image","video","audio"]
-    // chrome.contextMenus.create({"id": e.menuId,"title": "Download resource "+e.name})
-    elements.forEach((e)=>{
-        chrome.contextMenus.create({"id": e.menuId,"title": "Download resource "+e.name})
+    //下载指定资源
+    let menuItem = {};
+    pageElements.forEach((e)=>{
+        menuItem = {"id": e.menuId,contexts:[e.name],"title": "Download resource "+e.name}
+        chrome.contextMenus.create(menuItem)
     })
-
+    
     Multi.loadMedia()
 
     chrome.contextMenus.onClicked.addListener(onContextMenu)
 })
 
+//加载页面
+chrome.tabs.onUpdated.addListener((tabId,changeInfo,tab)=>{
+    if(changeInfo.url){
+        if(hasPageVideoMenu){
+            chrome.contextMenus.remove("context_pagevideo")
+            hasPageVideoMenu = false
+        }
+    }
+})
 
 chrome.webRequest.onBeforeRequest.addListener((details)=>{
-    let tabStat
+    let tabStat = tabStats[details.tabId]
 
     if(tabStats[details.tabId]){
-        chrome.contextMenus.create({"type":"normal","id":"context_"+details.tabId,"title": "Download page video"})
         tabStat = tabStats[details.tabId]
     }else{
         tabStat = tabStats[details.tabId] || {
@@ -43,12 +52,17 @@ chrome.webRequest.onBeforeRequest.addListener((details)=>{
         tabStats[details.tabId]= tabStat 
     }
 
-    let patterns = Multi.mediaPatterns(details.url)
-    if(patterns){//当前正在载入的页面中，包含视频
-        tabStat.patterns = patterns
+    let rule = Multi.mediaRule(details.url)
+
+    if(rule && !tabStat.patterns){//当前正在载入的页面中，包含视频
+        chrome.contextMenus.create({"id":"context_pagevideo",contexts:['page'],"type":"normal","title": "Download video"})
+        hasPageVideoMenu = true
+        tabStat.patterns = rule.patterns
+        tabStat.typeText = rule.typeText
+        // console.log(tabStat.patterns)
     }
 
-    if(tabStat.patterns){
+    if(tabStat && tabStat.patterns){
         let isDownloadUrl = tabStat.patterns.find((pattern)=>{
             return new RegExp(pattern,'g').test(details.url)
         })
@@ -66,7 +80,9 @@ chrome.webRequest.onBeforeRequest.addListener((details)=>{
 
  //右键菜单
  function onContextMenu(info,tab){
-    let urls = getUrlsFromInfo(info)
+    let urls = getUrlsFromInfo(info,tab)
+
+    console.log(urls)
 
     if(urls.length)
         Multi.download(urls)
@@ -82,14 +98,18 @@ chrome.webRequest.onBeforeRequest.addListener((details)=>{
  function getUrlsFromInfo(info,tab){
      let tabStat = tabStats[tab.id],urls = []
 
-     if(tabStat){
-        if(tabStat.downloadUrls){//下载页面中获取到的所有地址
+     //下载页面视频
+     if(info.menuItemId.indexOf('pagevideo')!=-1){
+        
+        if(tabStat.downloadUrls.length){//下载页面中获取到的所有地址
             urls = Global.copy(tabStat.downloadUrls)
         }else if(tabStat.patterns){//获取到地址时立刻下载
             tabStat.requestDownload = 1
         }
      }else{
-         let element = elements.find((e)=>e.menuId==info.menuItemId)
+         //下载链接
+
+         let element = pageElements.find((e)=>e.menuId==info.menuItemId)
          let url = info.srcUrl
      
          if(element.name=='page'){

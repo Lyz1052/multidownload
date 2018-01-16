@@ -22,7 +22,7 @@ $(()=>{
     refresh()
   })
 
-  $('#testButtons li').click((ev)=>{
+  $('body').on('click','#testButtons li',(ev)=>{
     let eventObj = $(ev.target).closest('li').find('a'),event = eventObj.html()
 
     if(event == 'refresh'){

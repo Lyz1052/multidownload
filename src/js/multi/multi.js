@@ -91,19 +91,28 @@ class Multi{
     }
 
     /********************* 网页媒体相关 *********************/
+
+    //重新加载媒体规则
     static reloadMedia(){
-        Multi.media = Global.localStorage.get('media',{
+        // Multi.media = Global.localStorage.get('media',{
+        //     version:'1.0',
+        //     rules:[]//{type:'bilibili',website:'^https?://www.bilibili.com/video/av',media:['https://upos-hz-mirrorkodo.acgvideo.com/*.flv']}
+        // })
+
+        //目前不做版本比较，直接用新规则覆盖老规则
+        Multi.media = {
             version:'1.0',
             rules:[]//{type:'bilibili',website:'^https?://www.bilibili.com/video/av',media:['https://upos-hz-mirrorkodo.acgvideo.com/*.flv']}
-        })
+        }
     }
 
     static resetMedia(){
         Multi.media.rules = [
             {
                 type:'bilibili',//类型名
+                typeText:'bilibili',//类型名，用于显示在下载菜单中
                 website:'^https?://www.bilibili.com/video/av',//网址正则
-                patterns:['https://upos-hz-mirrorkodo.acgvideo.com/.*\.flv'],//页面请求中媒体地址正则
+                patterns:['https://upos-hz-(.*)\.acgvideo\.com/.*\.flv'],//页面请求中媒体地址正则
             }
         ]
     }
@@ -130,13 +139,13 @@ class Multi{
         Global.localStorage.set('media',Multi.media)
     }
 
-    static mediaPatterns(url){
+    static mediaRule(url){
         let rule = _.find(Multi.media.rules,function(rule){
             return new RegExp(rule.website,'g').test(url)
         })
 
         if(rule)
-            return rule.patterns
+            return rule
 
         return null
     }
@@ -156,7 +165,8 @@ class Multi{
         download.start().then((result)=>{
             download.resolveStart(result).statusComplete((status)=>{
                 Multi.history.add(download)
-                statusCallback.apply(this,[status])
+                if(typeof statusCallback == 'function')
+                    statusCallback.apply(this,[status])
             })
         })
     }
