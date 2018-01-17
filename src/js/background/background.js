@@ -39,44 +39,53 @@ chrome.tabs.onUpdated.addListener((tabId,changeInfo,tab)=>{
     }
 })
 
-chrome.webRequest.onBeforeRequest.addListener((details)=>{
-    let tabStat = tabStats[details.tabId]
+// chrome.downloads.onCreated.addListener(function(downloadItem){
+//     console.log(downloadItem)
+// })
 
-    if(tabStats[details.tabId]){
-        tabStat = tabStats[details.tabId]
-    }else{
-        tabStat = tabStats[details.tabId] || {
-            requestDownload:0,
-            downloadUrls:[]
-        }
-        tabStats[details.tabId]= tabStat 
-    }
+// chrome.webRequest.onSendHeaders.addListener((details)=>{
+//     if(false)
+//     console.log(details)
+// },{urls: ["<all_urls>"]},[])
 
-    let rule = Multi.mediaRule(details.url)
+// chrome.webRequest.onBeforeRequest.addListener((details)=>{
+//     let tabStat = tabStats[details.tabId]
 
-    if(rule && !tabStat.patterns){//当前正在载入的页面中，包含视频
-        chrome.contextMenus.create({"id":"context_pagevideo",contexts:['page'],"type":"normal","title": "Download video"})
-        hasPageVideoMenu = true
-        tabStat.patterns = rule.patterns
-        tabStat.typeText = rule.typeText
-        // console.log(tabStat.patterns)
-    }
+//     if(tabStats[details.tabId]){
+//         tabStat = tabStats[details.tabId]
+//     }else{
+//         tabStat = tabStats[details.tabId] || {
+//             requestDownload:0,
+//             downloadUrls:[]
+//         }
+//         tabStats[details.tabId]= tabStat 
+//     }
 
-    if(tabStat && tabStat.patterns){
-        let isDownloadUrl = tabStat.patterns.find((pattern)=>{
-            return new RegExp(pattern,'g').test(details.url)
-        })
+//     let rule = Multi.mediaRule(details.url)
 
-        if(isDownloadUrl){
-            tabStat.downloadUrls.push(details.url)
-        }
+//     if(rule && !tabStat.patterns){//当前正在载入的页面中，包含视频
+//         chrome.contextMenus.create({"id":"context_pagevideo",contexts:['page'],"type":"normal","title": "Download video"})
+//         hasPageVideoMenu = true
+//         tabStat.patterns = rule.patterns
+//         tabStat.typeText = rule.typeText
+//     }
+    
+//     if(tabStat && tabStat.patterns){
+//         let isDownloadUrl = tabStat.patterns.find((pattern)=>{
+//             return new RegExp(pattern,'g').test(details.url)
+//         })
+        
+//         if(isDownloadUrl){
+//             console.log(details.url)
+//             tabStat.downloadUrls.push(details.url)
+//         }
 
-        if(tabStat.requestDownload){//已有下载请求，立刻下载
-            Multi.download(details.url)
-        }
-    }
+//         if(tabStat.requestDownload){//已有下载请求，立刻下载
+//             Multi.download(details.url)
+//         }
+//     }
 
-},{urls: ["<all_urls>"]},[])
+// },{urls: ["<all_urls>"]},[])
 
  //右键菜单
  function onContextMenu(info,tab){

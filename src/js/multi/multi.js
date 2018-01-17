@@ -112,7 +112,7 @@ class Multi{
                 type:'bilibili',//类型名
                 typeText:'bilibili',//类型名，用于显示在下载菜单中
                 website:'^https?://www.bilibili.com/video/av',//网址正则
-                patterns:['https://upos-hz-(.*)\.acgvideo\.com/.*\.flv'],//页面请求中媒体地址正则
+                patterns:['https://(.*)\.acgvideo\.com/.*\.flv'],//页面请求中媒体地址正则
             }
         ]
     }

@@ -12,6 +12,7 @@
   },
   "omnibox": { "keyword" : "Multidownload" },
   "permissions": [
+    "downloads",
     "<all_urls>",
     "webRequest",
     "activeTab",
