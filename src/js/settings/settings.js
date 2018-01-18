@@ -12,7 +12,7 @@ let data = {
   status:Status.connecting,
   filter:{},
   downloads:[]
-}
+},defaultDetail = false
 
 $(()=>{
   
@@ -73,6 +73,11 @@ function refresh(){
           download.isShow = false
         }
       })
+
+      //相当于一次性的渲染回调
+      setTimeout(function(){
+        toggleColumns()
+      })
   })
 }
 
@@ -106,11 +111,15 @@ $(()=>{
     }
   })
 
-  function toggleColumns(show){
+  //默认隐藏
+  defaultDetail = false;
+})
+
+  function toggleColumns(show = defaultDetail){
     let table = $('#itemTable')
   
     table.find('th,td').hide()
-  
+
     if(show){
       table.find('th,td').show()
     }else{
@@ -119,7 +128,3 @@ $(()=>{
       })
     }
   }
-
-  //默认隐藏
-  toggleColumns(0)
-})

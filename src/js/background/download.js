@@ -1,7 +1,7 @@
 import DownloadStatus from './downloadStatus'
 import {utils} from '../multi/multi'
 const path = require('path')
-const math = require('mathjs')
+// const math = require('mathjs')
 
 class Download{
     constructor(download){
@@ -23,14 +23,18 @@ class Download{
         this.downloadSpeed = download.downloadSpeed
     }
 
+    
     attributes(){
+
         return {
-            process:(math.round((this.completedLength|0)/(this.totalLength|0)*100,2)||0),
+            process:Number(utils.toFixed(((this.completedLength|0)/(this.totalLength|0)*100),2)),
             gid:this.gid,
             filename:this.filename,
             status:this.status,
             totalLength:this.totalLength,
+            totalLengthText:utils.parseUnit(this.totalLength).text,
             completedLength:this.completedLength,
+            completedLengthText:utils.parseUnit(this.completedLength).text,
             connections:this.connections,
             downloadSpeed:this.downloadSpeed,
             numSeeders:this.numSeeders,

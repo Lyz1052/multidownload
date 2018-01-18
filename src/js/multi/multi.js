@@ -3,6 +3,75 @@ import {_} from '../lib/lodash.min.js'
 //一些工具类，减少重复代码
 
 const utils = {
+    /**
+     * 保留一定精度
+     * @param data 数据
+     * @param accuracy 精度
+     * @param removeZero 是否去掉末尾的0
+    */
+    toFixed:(data, accuracy, removeZero)=>{
+        if (isNaN(accuracy))accuracy = 0;
+        if (!isNaN(data)) {
+            var right = true;
+            if (data < 0) {
+                right = !right;
+                data = -data;
+            }
+            var base = Math.pow(10, accuracy);
+            data = Math.round(data * base);
+            var res = accuracy ? Math.floor(data / base) + "." : Math.floor(data / base);
+
+            for (var i = 0; i < accuracy; i++) {
+                base /= 10;
+                res += Math.floor((data / base) % 10);
+            }
+
+            if (removeZero) {
+                if (res.indexOf(".") != -1)
+                    res = res.replace(/\.?0+$/g, '');
+            }
+
+            return right ? res : "-" + res;
+        }
+        return "";
+    },
+
+    parseUnit:(bitNumber,level)=>{
+        bitNumber|=0
+        if(bitNumber){
+            level = level ||
+            (Math.floor(Number((Math.log(bitNumber)/Math.log(1024))).toFixed(7)))
+        }else{
+            level = 0
+        }
+
+        let unit = [
+            {
+                name:'B',
+                scale:1
+            },
+            {
+                name:'K',
+                scale:1024,
+            },
+            {
+                name:'M',
+                scale:1024 * 1024,
+            },
+            {
+                name:'G',
+                scale:1024 * 1024 * 1024,
+            },
+        ],cLevel = 0,cname='B',obj = {
+            val:bitNumber/(unit[level].scale),
+            unit:unit[level].name
+        }
+
+        obj.text = utils.toFixed(obj.val,2,true) + obj.unit
+
+        return obj
+    },
+
     RPCInit:function(config={
         namespace:'aria2',
         port:6800,
