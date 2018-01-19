@@ -17,6 +17,8 @@ class Download{
         this.errorCode = download.errorCode
         this.numSeeders = download.numSeeders
         this.downloadSpeed = download.downloadSpeed
+        this.followedBy = download.followedBy
+        this.dir = download.dir
         if(download.files)
             this.filename = download.files.map((file)=>{return path.basename(file.path)})
                                 .join(",")
@@ -37,8 +39,11 @@ class Download{
             completedLengthText:utils.parseUnit(this.completedLength).text,
             connections:this.connections,
             downloadSpeed:this.downloadSpeed,
+            downloadSpeedText:utils.parseUnit(this.downloadSpeed).text,
             numSeeders:this.numSeeders,
             downloadSpeed:this.downloadSpeed,
+            dir:this.dir,
+            isMetadata:!!this.followedBy
         }
     }
 

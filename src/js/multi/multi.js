@@ -1,7 +1,7 @@
 import Download from '../background/download'
 import {_} from '../lib/lodash.min.js'
-//一些工具类，减少重复代码
 
+//通用工具对象
 const utils = {
     /**
      * 保留一定精度
@@ -74,11 +74,11 @@ const utils = {
 
     RPCInit:function(config={
         namespace:'aria2',
+        url:'localhost',
         port:6800,
     }){
-
         $.jsonRPC.setup({
-            endPoint: 'http://localhost:'+config.port+'/jsonrpc',
+            endPoint: 'http://'+config.url+':'+config.port+'/jsonrpc',
             namespace: config.namespace
         });
     },
@@ -101,16 +101,58 @@ const utils = {
 
     Alert(window,res){
         window.alert(window.JSON.stringify(res))
+    },
+
+    localStorage:{
+        set(name,item){
+            if(typeof item == 'object'){
+                item = JSON.stringify(item)
+            }
+    
+            localStorage.setItem(name,item)
+        },
+    
+        get(name,defaults){
+            let obj = localStorage.getItem(name)
+            if(!obj){
+                localStorage.setItem(name,JSON.stringify(defaults))
+                obj = defaults
+            }else{
+                obj = JSON.parse(obj)
+            }
+    
+            return obj
+        }
+    },
+
+    getOptions(){
+        return utils.localStorage.get('options',{})
+    },
+
+    setOptions(key,value){
+        let options = utils.getOptions()
+
+        options.key = value
+
+        utils.localStorage.set('options',options)
     }
 }
 
 //通用工具类
 class Global{
-    constructor(){
-    }
+    constructor(){}
 
     static copy(source){
         return JSON.parse(JSON.stringify(source))
+    }
+
+    static copyFrom(source,dest){
+        for(let p in dest){
+            if(typeof dest[p] != 'object')
+                source[p] = dest[p]
+            else
+                source[p] = Global.copy(dest[p])
+        }
     }
 
     static stringify(obj){
@@ -130,29 +172,6 @@ class Global{
     }
 }
 
-//静态属性
-Global.localStorage = {
-    set(name,item){
-        if(typeof item == 'object'){
-            item = JSON.stringify(item)
-        }
-
-        localStorage.setItem(name,item)
-    },
-
-    get(name,defaults){
-        let obj = localStorage.getItem(name)
-        if(!obj){
-            localStorage.setItem(name,JSON.stringify(defaults))
-            obj = defaults
-        }else{
-            obj = JSON.parse(obj)
-        }
-
-        return obj
-    }
-}
-
 //下载相关工具类
 class Multi{
     constructor(){
@@ -163,7 +182,7 @@ class Multi{
 
     //重新加载媒体规则
     static reloadMedia(){
-        // Multi.media = Global.localStorage.get('media',{
+        // Multi.media = utils.localStorage.get('media',{
         //     version:'1.0',
         //     rules:[]//{type:'bilibili',website:'^https?://www.bilibili.com/video/av',media:['https://upos-hz-mirrorkodo.acgvideo.com/*.flv']}
         // })
@@ -205,7 +224,7 @@ class Multi{
             }
         })
 
-        Global.localStorage.set('media',Multi.media)
+        utils.localStorage.set('media',Multi.media)
     }
 
     static mediaRule(url){
@@ -244,7 +263,7 @@ class Multi{
 /********************* 下载历史 *********************/
 Multi.history = {
     add(obj = {}){
-        let history = Global.localStorage.get('history',{
+        let history = utils.localStorage.get('history',{
             downloads:[]
         })
 
@@ -262,11 +281,11 @@ Multi.history = {
             history.downloads.push(obj)
         }
 
-        Global.localStorage.set('history',history)
+        utils.localStorage.set('history',history)
     },
 
     get(filter = {}){
-        let history = Global.localStorage.get('history',{
+        let history = utils.localStorage.get('history',{
             downloads:[]
         })
 

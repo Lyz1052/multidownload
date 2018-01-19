@@ -65,7 +65,7 @@ gulp.task('libs',()=>{
             ,'src/js/lib/bootstrap.min.js'
             ,'src/js/lib/adminlte.min.js'
             ,'src/js/lib/jquery.jsonrpc.js'
-            // ,'src/js/lib/template-web.js'
+            // ,'src/js/lib/bootstrap-switch.min.js'
         ])
     .pipe(concat('libs.js'))
     .pipe(uglify())
